@@ -1,0 +1,11 @@
+body{
+    background: #000;
+    color: azure;
+}
+.App{
+    text-align: center;
+    padding: 5%
+}
+.App-title{
+    font-size: 30px
+}
