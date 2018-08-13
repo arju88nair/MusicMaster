@@ -1,12 +1,14 @@
 import React, { Component } from 'react'
 import './App.css'
+import axios from 'axios';
 import { FormGroup, FormControl, InputGroup, Glyphicon } from 'react-bootstrap'
+import Profile from  './Profile'
 
 
 export default class App extends Component {
     constructor(props) {
         super(props);
-        this.state = { query: '' };
+        this.state = { query: '',artist:null };
 
     }
 
@@ -14,17 +16,30 @@ export default class App extends Component {
         var bearer='Bearer BQDsxMZUm77r0pVLCdYtA_qzTbwsI2ypndHu9WP-f94mUz-S4RJojz2XshS5xSUc1rzJrw_0lxbEXFscZm3c2HAlEeAJg2Jyzp1z8EVdGr0vAR0Y-tq3uMkQf7DcDSnPK50kREA7wL7i6Sjj4JfBNeebE0J9OwiRjiwxKDw1G8WK4c9f-pPw4wNXGoMPKwgSzKw5WOtL4tHIu-K74Q'
         const API_URI="https://api.spotify.com/v1/search?";
         const FETCH_URI=`${API_URI}q=${this.state.query}&type=artist&limit=1`;
-        fetch(FETCH_URI,{
-            method:'GET',
-            headers:new Headers({
-                'Authorization': bearer, 
-              }), 
-        })
-        .then(response => response.json())
-        .then(json => console.log(json))
-        .catch(error =>console.log(error));
+
+        axios({
+            url: FETCH_URI,
+            method: 'get',
+            headers: {
+                'Authorization': bearer,
+            }
+         })
+         .then(response => {
+
+            let artist=response.data.artists.items[0];
+            this.setState({artist})
+            console.log(this.state)
+
+         }) 
+         .catch(err => {
+            console.log(err);
+         });
 
     }
+
+
+
+    
     render() {
         return (
             <div className="App">
@@ -32,7 +47,7 @@ export default class App extends Component {
                 <FormGroup>
                     <InputGroup>
                         <FormControl type="text" placeholder="Search for the fucker" query={this.state.query} onChange={event => { this.setState({ query: event.target.value }) }} onKeyPress={event => {
-                            if (event.key == 'Enter') {
+                            if (event.key === 'Enter') {
                                 this.search()
                             }
                         }} />
@@ -43,13 +58,15 @@ export default class App extends Component {
                         </InputGroup.Addon>
                     </InputGroup>
                 </FormGroup>
-                <div className="profile">
-                    <div>Artist Name</div>
-                    <div>Artist Picture</div>
-                </div>
-                <div className="gallery">
-                    Gallery
-                </div>
+                {
+                    this.state.artist !== null ?
+                        <div>
+                            <Profile artist={this.state.artist} />
+                        </div>
+                    :
+                        <div>No artist found</div>
+
+                }
             </div>
 
         )
