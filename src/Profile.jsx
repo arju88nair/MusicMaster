@@ -8,6 +8,7 @@ class Profile extends Component {
         artist = this.props.artist !== null ? this.props.artist : artist;
         let profilePic;
         profilePic = artist.images[0] !== undefined ? artist.images[0].url : null;
+        console.log(profilePic)
         if (profilePic !== null) {
             return (
                 <div className='profile'>

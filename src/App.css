@@ -45,6 +45,9 @@ body {
 
 /*Gallery*/
 
+.hidden{
+    display: none;
+}
 .track {
     display: inline-block;
     width: 220px;
@@ -53,6 +56,7 @@ body {
     text-align: left;
     cursor: pointer;
     position: relative;
+    border:thick solid lightgoldenrodyellow;
 }
 
 .track-img {

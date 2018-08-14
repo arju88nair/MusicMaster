@@ -3,6 +3,8 @@ import './App.css'
 import axios from 'axios';
 import { FormGroup, FormControl, InputGroup, Glyphicon } from 'react-bootstrap'
 import Profile from  './Profile'
+import Gallery from './Gallery'
+
 const redirectURI = 'http://localhost:3000';
 const cliendId = 'e41ec9e599ee4934bbfdceeb4dee70e0';
 
@@ -10,7 +12,7 @@ const cliendId = 'e41ec9e599ee4934bbfdceeb4dee70e0';
 export default class App extends Component {
     constructor(props) {
         super(props);
-        this.state = { query: '',artist:null ,accessToken:'',isLoading:false};
+        this.state = { query: '',artist:null ,accessToken:'',isLoading:false,tracks:[]};
 
     }
 
@@ -42,6 +44,7 @@ componentDidMount(){
         var bearer='Bearer '+access_tokens;
         const API_URI="https://api.spotify.com/v1/search?";
         const FETCH_URI=`${API_URI}q=${this.state.query}&type=artist&limit=1`;
+        const ALBUM_URL = 'https://api.spotify.com/v1/artists/';
 
         axios({
             url: FETCH_URI,
@@ -53,16 +56,34 @@ componentDidMount(){
          .then(response => {
 
             let artist=response.data.artists.items[0];
-            this.setState({artist,isLoading:false})
             console.log(this.state)
+
+            this.setState({artist});
+            let FETCH_URL = `${ALBUM_URL}${artist.id}/top-tracks?country=NL&`;
+            axios({
+                url: FETCH_URL,
+                method: 'get',
+                headers: {
+                    'Authorization': bearer,
+                }
+             })
+             .then(response=>{
+                 const tracks = response.data.tracks;
+                 console.log(this.state)
+                 this.setState({tracks,isLoading:false});
+
+             })
+
 
          }) 
          .catch(err => {
+            this.setState({isLoading:false});
+
             console.log(err);
          });
 
     }
-
+    
 
 
     
@@ -97,10 +118,10 @@ componentDidMount(){
                     this.state.artist !== null ?
                         <div>
                             <Profile artist={this.state.artist} />
+                            <Gallery tracks={this.state.tracks} />
                         </div>
                     :
                         <div>No artist found</div>
-
                 }
             </div>
 
