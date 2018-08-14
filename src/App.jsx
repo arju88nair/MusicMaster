@@ -3,17 +3,42 @@ import './App.css'
 import axios from 'axios';
 import { FormGroup, FormControl, InputGroup, Glyphicon } from 'react-bootstrap'
 import Profile from  './Profile'
+const redirectURI = 'http://localhost:3000';
+const cliendId = 'e41ec9e599ee4934bbfdceeb4dee70e0';
 
 
 export default class App extends Component {
     constructor(props) {
         super(props);
-        this.state = { query: '',artist:null };
+        this.state = { query: '',artist:null ,accessToken:''};
 
     }
 
+componentDidMount(){
+    this.getAccessToken();
+}
+    getAccessToken() {
+        console.log(this.state)
+        if(this.state.accessToken =="") {
+          const url = window.location.href;
+          const newToken = url.match(/access_token=([^&]*)/);
+          const newExpire = url.match(/expires_in=([^&]*)/);
+        if (newToken && newExpire) {
+            let accessToken = newToken[1];
+            let expiresIn = Number(newExpire[1]);
+            window.setTimeout(() => accessToken = '', expiresIn * 1000);
+            window.history.pushState('Access Token', null, '/');
+            this.setState({accessToken})
+          } else {
+            const spotifyAuthUrl = `https://accounts.spotify.com/authorize?client_id=${cliendId}&response_type=token&scope=playlist-modify-public&redirect_uri=${redirectURI}`;
+            window.location = spotifyAuthUrl;
+          }
+        }
+      }
+
     search() {
-        var bearer='Bearer BQDsxMZUm77r0pVLCdYtA_qzTbwsI2ypndHu9WP-f94mUz-S4RJojz2XshS5xSUc1rzJrw_0lxbEXFscZm3c2HAlEeAJg2Jyzp1z8EVdGr0vAR0Y-tq3uMkQf7DcDSnPK50kREA7wL7i6Sjj4JfBNeebE0J9OwiRjiwxKDw1G8WK4c9f-pPw4wNXGoMPKwgSzKw5WOtL4tHIu-K74Q'
+        let access_tokens=this.state.accessToken;
+        var bearer='Bearer '+access_tokens;
         const API_URI="https://api.spotify.com/v1/search?";
         const FETCH_URI=`${API_URI}q=${this.state.query}&type=artist&limit=1`;
 

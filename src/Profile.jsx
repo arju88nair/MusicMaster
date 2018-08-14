@@ -6,12 +6,11 @@ export default class Profile extends Component{
 render()
 {
     let artist = {name: '', followers: {total: ''}, images: [{url: ''}], genres: []};
-    if(this.props.artist != null)
-    {
-        artist=this.props.artist
-    }
+   
+    artist=this.props.artist !=null?this.props.artist:artist;
     return(
-        <div>
+        <div>       
+                    <img className="profile-img" src={artist.images[0].url}/>
 
                     <div>{artist.name}</div>
                     <div>{artist.followers.total}</div>
