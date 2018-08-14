@@ -10,7 +10,7 @@ const cliendId = 'e41ec9e599ee4934bbfdceeb4dee70e0';
 export default class App extends Component {
     constructor(props) {
         super(props);
-        this.state = { query: '',artist:null ,accessToken:''};
+        this.state = { query: '',artist:null ,accessToken:'',isLoading:false};
 
     }
 
@@ -19,7 +19,7 @@ componentDidMount(){
 }
     getAccessToken() {
         console.log(this.state)
-        if(this.state.accessToken =="") {
+        if(this.state.accessToken === "") {
           const url = window.location.href;
           const newToken = url.match(/access_token=([^&]*)/);
           const newExpire = url.match(/expires_in=([^&]*)/);
@@ -37,6 +37,7 @@ componentDidMount(){
       }
 
     search() {
+        this.setState({isLoading:true})
         let access_tokens=this.state.accessToken;
         var bearer='Bearer '+access_tokens;
         const API_URI="https://api.spotify.com/v1/search?";
@@ -52,7 +53,7 @@ componentDidMount(){
          .then(response => {
 
             let artist=response.data.artists.items[0];
-            this.setState({artist})
+            this.setState({artist,isLoading:false})
             console.log(this.state)
 
          }) 
@@ -66,6 +67,15 @@ componentDidMount(){
 
     
     render() {
+        if(this.state.isLoading)
+        {
+            return(
+                <div id="preloader"></div>
+
+            )
+        }
+
+
         return (
             <div className="App">
                 <div className="App-title">Fuck you</div>
